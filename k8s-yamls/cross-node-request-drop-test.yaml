@@ -2,17 +2,17 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: request-drop-test-client
+  name: request-drop-test-client-001
 spec:
   selector:
     matchLabels:
-      app: request-drop-test-client
-      client: request-drop-test
+      app: request-drop-test-client-001
+      client: request-drop-test-001
   template:
     metadata:
       labels:
-        app: request-drop-test-client
-        client: request-drop-test
+        app: request-drop-test-client-001
+        client: request-drop-test-001
     spec:
       containers:
       - name: curl
@@ -21,7 +21,7 @@ spec:
         args:
         - |
           while true; do
-            HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" -m 30 http://request-drop-test-server)
+            HTTP_CODE=$(curl -o /dev/null -s -w "%{http_code}" -m 30 http://request-drop-test-server-001)
             echo "HTTP_CODE: $HTTP_CODE TIME: $(date +%s)"
             if [ "$HTTP_CODE" -ne 200 ]; then
               exit 1
@@ -31,17 +31,17 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: request-drop-test-server
+  name: request-drop-test-server-001
 spec:
   selector:
     matchLabels:
-      app: request-drop-test-server
-      server: request-drop-test
+      app: request-drop-test-server-001
+      server: request-drop-test-001
   template:
     metadata:
       labels:
-        app: request-drop-test-server
-        server: request-drop-test
+        app: request-drop-test-server-001
+        server: request-drop-test-001
       annotations:
         policy.cilium.io/proxy-visibility: "<Egress/53/UDP/DNS>,<Ingress/80/TCP/HTTP>"
     spec:
@@ -54,11 +54,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: request-drop-test-server
+  name: request-drop-test-server-001
 spec:
   selector:
-    app: request-drop-test-server
-    server: request-drop-test
+    app: request-drop-test-server-001
+    server: request-drop-test-001
   ports:
     - protocol: TCP
       port: 80
